@@ -173,3 +173,56 @@ Todo el código fuente incluye comentarios en español explicando:
   validación del formulario da feedback inmediato en el campo, y la
   validación de `Hotel` garantiza que la regla se cumpla sin importar
   desde dónde se llame al servicio.
+
+## 8. Actividad de rediseño: mejoras propuestas para RoomsScreen
+
+Pantalla asignada: **`lib/screens/rooms_screen.dart` (RoomsScreen, RF03)** —
+Grupo 4 en la actividad "Descubriendo el código de Hotel Cartagena".
+
+### 8.1 Necesidad del usuario
+
+> *El recepcionista necesita encontrar rápido una habitación que le sirva al
+> huésped y reservarla sin equivocarse de número.*
+
+### 8.2 Diagnóstico de la pantalla original
+
+| # | Problema observado | Consecuencia para el usuario | Evidencia en el código |
+|---|---|---|---|
+| P1 | El chip de estado siempre dice "Disponible" en verde. | Ruido visual: ocupa espacio sin aportar información. | Solo se listan disponibles (`consultarDisponiblesAgrupadas()`); el propio comentario de `_EstadoChip` lo reconoce. |
+| P2 | La pantalla no lleva a ninguna acción. | Para reservar hay que volver al menú, entrar a Reservar y escribir el número de memoria; riesgo de error y pérdida de tiempo. | Los `ListTile` no tienen `onTap` ni botones. |
+| P3 | No ayuda a elegir según el número de huéspedes. | Con un grupo de 3, el recepcionista debe deducir que solo sirve una Suite. | La capacidad solo aparece como texto en el `subtitle`. |
+| P4 | No hay panorama general del hotel. | Con "0 disponibles" no se sabe si el hotel está lleno o qué está reservado/ocupado. | Solo se muestran habitaciones disponibles; no hay totales. |
+| P5 | Los datos pueden quedar desactualizados. | Si se vuelve a la pantalla desde otra, no se refresca y no hay forma de actualizar. | `RoomsScreen` es `StatelessWidget`, sin `RefreshIndicator`. |
+| P6 | Textos poco naturales y estado vacío sin orientación. | Lectura menos clara ("disponible(s)", "persona(s)"); el aviso vacío no sugiere qué hacer. | Cadenas en el `title` del `ExpansionTile` y en el `ListTile` de aviso. |
+
+### 8.3 Mejoras priorizadas
+
+| Prioridad | Mejora | Problema que resuelve | Cambio en Flutter | Beneficio esperado | Cómo se comprobará |
+|---|---|---|---|---|---|
+| 1 | Botón **Reservar** en cada habitación que abre `ReserveScreen` con el número precargado. | P2 | `ListTile.trailing` con `FilledButton.tonal` + `Navigator.push`; parámetro opcional `numeroInicial` en `ReserveScreen`. | Menos pasos y cero errores al digitar el número. | Contar toques antes/después; reservar desde la lista sin escribir el número. |
+| 2 | Filtro **"¿Cuántas personas?"** (1 · 2 · 3–4). | P3 | `ChoiceChip` en un `Wrap`; filtra por `habitacion.capacidad` solo para mostrar. | Ver solo habitaciones que sirven al huésped. | Seleccionar "3–4" y verificar que solo aparecen Suites. |
+| 3 | **Resumen superior** con disponibles, reservadas y ocupadas. | P4 | `Row` de tarjetas de conteo leyendo `hotel.habitaciones` (solo lectura). | Panorama del hotel de un vistazo. | Reservar/check-in y verificar que los contadores cambian. |
+| 4 | **Actualización automática y manual.** | P5 | Pasar a `StatefulWidget`; `setState` al volver de `ReserveScreen`; `RefreshIndicator`. | La lista siempre refleja el estado real. | Reservar desde la lista y comprobar que la habitación desaparece al volver. |
+| 5 | **Limpieza visual y textos.** | P1, P6 | Quitar el chip redundante; capacidad con ícono `Icons.person`; plurales correctos; estado vacío con sugerencia. | Pantalla más limpia y fácil de leer. | Comparar capturas antes/después; prueba en pantalla pequeña sin desbordes. |
+
+### 8.4 Restricciones respetadas
+
+- **No se modifican las reglas de negocio** de `lib/services/hotel.dart`; la
+  validación de capacidad sigue ocurriendo en el check-in y la de disponibilidad
+  en la reserva.
+- El filtro y el resumen son **solo de presentación** (leen datos, no validan).
+- Único cambio fuera de la pantalla: parámetro opcional `numeroInicial` en
+  `ReserveScreen` (no altera su comportamiento si no se envía).
+
+### 8.5 Pruebas previstas
+
+| Escenario | Acción | Resultado esperado |
+|---|---|---|
+| Uso normal | Filtrar por 2 personas y reservar la 104 desde la lista. | `ReserveScreen` abre con "104"; al volver, la 104 ya no aparece y el resumen se actualiza. |
+| Datos incorrectos | En la reserva precargada, poner 0 días. | El formulario y `Hotel` rechazan la reserva con mensaje de error. |
+| Error de negocio | Reservar dos veces la misma habitación (otra pestaña/flujo). | `HotelException`: "La habitación X no está disponible." |
+| Sin resultados | Reservar las 3 Suites y filtrar por 3–4 personas. | Estado vacío con sugerencia, sin errores. |
+| Otro tamaño de pantalla | Ejecutar en ventana angosta (≈360 px) y ancha. | Sin desbordes; contenido legible. |
+
+> Estado de cada mejora: *propuesta*. Se marcará como **comprobado**,
+> **observado** o **esperado** en el informe final, según la evidencia obtenida.
