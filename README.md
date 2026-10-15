@@ -84,6 +84,9 @@ que todas comparten la misma información mientras la app esté abierta.
 
 ## 4. Cómo instalar y ejecutar el proyecto
 
+> 📄 La guía completa y actualizada (requisitos, comandos, primer uso y
+> solución de problemas) está en **[INSTALACION.md](INSTALACION.md)**.
+
 **Requisitos:** tener instalado el
 [SDK de Flutter](https://docs.flutter.dev/get-started/install) y un
 dispositivo/emulador, un navegador o soporte de escritorio habilitado.
