@@ -1,21 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc 3.12.1" />
+  <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Informe — Rediseño de RoomsScreen</title>
+  <title>Informe ��� Redise��o de RoomsScreen</title>
   <style>
-    /* Default styles provided by pandoc.
-    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-    */
+    code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: 1.5em;}
-    div.column{flex: auto;}
-    @media screen {
-    div.columns{gap: min(4vw, 1.5em);}
-    div.column{overflow-x: auto;}
-    }
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     /* The extra [class] is a hack that increases specificity enough to
        override a similar rule in reveal.js */
@@ -26,10 +20,10 @@
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
     /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span { line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -95,9 +89,6 @@
   <link rel="stylesheet" href="estilo.css" />
 </head>
 <body>
-<header id="title-block-header">
-<h1 class="title">Informe — Rediseño de RoomsScreen</h1>
-</header>
 <h1 id="informe-breve-de-diagnóstico-y-mejora">Informe breve de
 diagnóstico y mejora</h1>
 <h2 id="de-comprender-el-código-a-transformar-la-experiencia">De
@@ -129,7 +120,7 @@ de mejora</strong>.</p>
 <col style="width: 12%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>#</th>
 <th>Elemento observado</th>
 <th>Problema u oportunidad</th>
@@ -138,7 +129,7 @@ de mejora</strong>.</p>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>P1</td>
 <td>Chip de estado (<code>_EstadoChip</code>)</td>
 <td>El chip siempre dice “Disponible” en verde</td>
@@ -146,7 +137,7 @@ de mejora</strong>.</p>
 <td><code>_EstadoChip</code> (líneas 75–92); solo se listan disponibles
 (<code>consultarDisponiblesAgrupadas()</code>)</td>
 </tr>
-<tr>
+<tr class="even">
 <td>P2</td>
 <td>Filas de habitación (<code>ListTile</code>)</td>
 <td>No llevan a ninguna acción</td>
@@ -155,7 +146,7 @@ el número de memoria: riesgo de error y pérdida de tiempo</td>
 <td><code>ListTile</code> sin <code>onTap</code> ni botones (líneas
 53–59)</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>P3</td>
 <td>Capacidad</td>
 <td>No ayuda a elegir según el número de huéspedes</td>
@@ -164,7 +155,7 @@ Suite</td>
 <td>La capacidad solo aparece como texto en el <code>subtitle</code>
 (líneas 56–57)</td>
 </tr>
-<tr>
+<tr class="even">
 <td>P4</td>
 <td>Listado</td>
 <td>No hay panorama general del hotel</td>
@@ -174,7 +165,7 @@ reservado/ocupado</td>
 (<code>hotel.dart</code>,
 <code>consultarDisponiblesAgrupadas</code>)</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>P5</td>
 <td>Estado de la pantalla</td>
 <td>Los datos pueden quedar desactualizados</td>
@@ -183,7 +174,7 @@ de actualizar</td>
 <td><code>RoomsScreen</code> es <code>StatelessWidget</code>, sin
 <code>RefreshIndicator</code> (línea 14)</td>
 </tr>
-<tr>
+<tr class="even">
 <td>P6</td>
 <td>Textos</td>
 <td>Textos poco naturales y estado vacío sin orientación</td>
@@ -208,7 +199,7 @@ equivocarse), que es el propósito de la pantalla.</p>
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>#</th>
 <th>Problema que resuelve</th>
 <th>Mejora propuesta</th>
@@ -217,7 +208,7 @@ equivocarse), que es el propósito de la pantalla.</p>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>M1</td>
 <td>P2</td>
 <td>Botón <strong>Reservar</strong> en cada habitación que abre
@@ -226,14 +217,14 @@ equivocarse), que es el propósito de la pantalla.</p>
 <td>Reservar desde la lista sin escribir el número; contar toques
 antes/después</td>
 </tr>
-<tr>
+<tr class="even">
 <td>M2</td>
 <td>P3</td>
 <td>Filtro <strong>“¿Cuántas personas?”</strong> (1 · 2 · 3–4)</td>
 <td>Ver solo habitaciones que sirven al huésped</td>
 <td>Seleccionar “3–4” y verificar que solo aparecen Suites</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>M3</td>
 <td>P4</td>
 <td><strong>Resumen superior</strong> con disponibles, reservadas y
@@ -241,16 +232,17 @@ ocupadas</td>
 <td>Panorama del hotel de un vistazo</td>
 <td>Reservar/check-in y verificar que los contadores cambian</td>
 </tr>
-<tr>
+<tr class="even">
 <td>M4</td>
 <td>P5</td>
 <td><strong>Actualización automática y manual</strong>
-(<code>StatefulWidget</code> + <code>RefreshIndicator</code>)</td>
+(<code>StatefulWidget</code> + <code>RefreshIndicator</code> + botón
+“Actualizar”)</td>
 <td>La lista siempre refleja el estado real</td>
 <td>Reservar desde la lista y comprobar que la habitación desaparece al
 volver</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>M5</td>
 <td>P1 y P6</td>
 <td><strong>Limpieza visual y textos</strong></td>
@@ -282,33 +274,38 @@ desbordes</td>
 │  ▼ Doble (3 disponibles)                      │
 │  ▼ Suite (3 disponibles)                      │
 └───────────────────────────────────────────────┘</code></pre>
-<p><strong>Decisiones de diseño:</strong> - <strong>Jerarquía:</strong>
-el resumen va arriba (información de contexto) y el filtro justo debajo,
-antes de la lista. - <strong>Acción principal:</strong> el botón
-“Reservar” queda a la derecha de cada fila, con estilo
-<code>FilledButton.tonal</code> para no competir con el botón principal
-de confirmación de <code>ReserveScreen</code>. - <strong>Estados de
-interacción:</strong> el filtro resalta la opción elegida
-(<code>ChoiceChip.selected</code>); al volver de la reserva la lista se
-reconstruye; <code>RefreshIndicator</code> permite actualizar
-manualmente. - <strong>Estado vacío:</strong> si no hay resultados, se
-muestra un mensaje con sugerencia (“Ajusta el filtro…”). -
-<strong>Adaptabilidad:</strong> el resumen usa <code>Row</code> +
+<p><strong>Decisiones de diseño:</strong></p>
+<ul>
+<li><strong>Jerarquía:</strong> el resumen va arriba (información de
+contexto) y el filtro justo debajo, antes de la lista.</li>
+<li><strong>Acción principal:</strong> el botón “Reservar” queda a la
+derecha de cada fila, con estilo <code>FilledButton.tonal</code> para no
+competir con el botón principal de confirmación de
+<code>ReserveScreen</code>.</li>
+<li><strong>Estados de interacción:</strong> el filtro resalta la opción
+elegida (<code>ChoiceChip.selected</code>); al volver de la reserva la
+lista se reconstruye; <code>RefreshIndicator</code> (gesto táctil) y un
+botón “Actualizar” en la barra superior (útil con mouse en
+Chrome/escritorio) permiten actualizar manualmente.</li>
+<li><strong>Estado vacío:</strong> si no hay resultados, se muestra un
+mensaje con sugerencia (“Ajusta el filtro…”).</li>
+<li><strong>Adaptabilidad:</strong> el resumen usa <code>Row</code> +
 <code>Expanded</code> (3 tarjetas que se reparten el ancho) y la lista
 usa <code>ListView</code> con <code>padding</code>, para evitar
-desbordes en pantallas angostas.</p>
+desbordes en pantallas angostas.</li>
+</ul>
 <hr />
 <h2 id="implementación-técnica">5. Implementación técnica</h2>
 <h3 id="rooms_screen.dart-pasa-a-statefulwidget">5.1
 <code>rooms_screen.dart</code> pasa a <code>StatefulWidget</code></h3>
 <p>Permite guardar el filtro seleccionado y refrescar la vista.</p>
 <div class="sourceCode" id="cb2"><pre
-class="sourceCode dart"><code class="sourceCode dart"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> RoomsScreen <span class="kw">extends</span> StatefulWidget <span class="op">{</span></span>
+class="sourceCode dart"><code class="sourceCode dart"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> RoomsScreen <span class="kw">extends</span> StatefulWidget {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">final</span> Hotel hotel;</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> RoomsScreen(<span class="op">{</span><span class="kw">super</span><span class="op">.</span>key<span class="op">,</span> required <span class="kw">this</span><span class="op">.</span>hotel<span class="op">}</span>);</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> RoomsScreen({<span class="kw">super</span><span class="op">.</span>key<span class="op">,</span> required <span class="kw">this</span><span class="op">.</span>hotel});</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">@override</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  State<span class="op">&lt;</span>RoomsScreen<span class="op">&gt;</span> createState() <span class="op">=&gt;</span> _RoomsScreenState();</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="filtro-cuántas-personas-m2">5.2 Filtro “¿Cuántas personas?”
 (M2)</h3>
 <p>Solo afecta la presentación; <strong>no valida nada</strong> en
@@ -333,7 +330,7 @@ class="sourceCode dart"><code class="sourceCode dart"><span id="cb4-1"><a href="
 <h3 id="botón-reservar-y-actualización-al-volver-m1-m4">5.4 Botón
 “Reservar” y actualización al volver (M1 + M4)</h3>
 <div class="sourceCode" id="cb5"><pre
-class="sourceCode dart"><code class="sourceCode dart"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">Future</span><span class="op">&lt;</span><span class="dt">void</span><span class="op">&gt;</span> _irAReservar(Habitacion habitacion) <span class="at">async</span> <span class="op">{</span></span>
+class="sourceCode dart"><code class="sourceCode dart"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">Future</span><span class="op">&lt;</span><span class="dt">void</span><span class="op">&gt;</span> _irAReservar(Habitacion habitacion) <span class="at">async</span> {</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">await</span> Navigator<span class="op">.</span>of(context)<span class="op">.</span>push(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    MaterialPageRoute(</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>      builder<span class="op">:</span> (_) <span class="op">=&gt;</span> ReserveScreen(</span>
@@ -342,28 +339,50 @@ class="sourceCode dart"><code class="sourceCode dart"><span id="cb5-1"><a href="
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      )<span class="op">,</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    )<span class="op">,</span></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  );</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (mounted) setState(() <span class="op">{}</span>); <span class="co">// reconstruye: la habitación ya reservada desaparece</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h3 id="refreshindicator-m4">5.5 <code>RefreshIndicator</code> (M4)</h3>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (mounted) setState(() {}); <span class="co">// reconstruye: la habitación ya reservada desaparece</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="refreshindicator-y-botón-actualizar-m4">5.5
+<code>RefreshIndicator</code> y botón “Actualizar” (M4)</h3>
 <div class="sourceCode" id="cb6"><pre
-class="sourceCode dart"><code class="sourceCode dart"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>body<span class="op">:</span> RefreshIndicator(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  onRefresh<span class="op">:</span> _refrescar<span class="op">,</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  child<span class="op">:</span> ListView(padding<span class="op">:</span> <span class="at">const</span> EdgeInsets<span class="op">.</span>all(<span class="dv">16</span>)<span class="op">,</span> children<span class="op">:</span> [ <span class="op">...</span> ])<span class="op">,</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">,</span></span></code></pre></div>
+class="sourceCode dart"><code class="sourceCode dart"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>appBar<span class="op">:</span> AppBar(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  title<span class="op">:</span> <span class="at">const</span> Text(<span class="st">&#39;Habitaciones disponibles&#39;</span>)<span class="op">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  actions<span class="op">:</span> [</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    IconButton(</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      tooltip<span class="op">:</span> <span class="st">&#39;Actualizar&#39;</span><span class="op">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      icon<span class="op">:</span> <span class="at">const</span> Icon(Icons<span class="op">.</span>refresh)<span class="op">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      onPressed<span class="op">:</span> _refrescar<span class="op">,</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    )<span class="op">,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)<span class="op">,</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>body<span class="op">:</span> RefreshIndicator(</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  onRefresh<span class="op">:</span> _refrescar<span class="op">,</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  child<span class="op">:</span> ListView(</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    physics<span class="op">:</span> <span class="at">const</span> AlwaysScrollableScrollPhysics()<span class="op">,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    padding<span class="op">:</span> <span class="at">const</span> EdgeInsets<span class="op">.</span>all(<span class="dv">16</span>)<span class="op">,</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    children<span class="op">:</span> [ <span class="op">...</span> ]<span class="op">,</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  )<span class="op">,</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>)<span class="op">,</span></span></code></pre></div>
+<p>En web y escritorio, Flutter no permite arrastrar la lista con el
+mouse, así que el gesto de “jalar hacia abajo” solo sirve en pantallas
+táctiles. Por eso se agregó el botón “Actualizar” y
+<code>AlwaysScrollableScrollPhysics</code> (para que el gesto funcione
+aunque la lista sea corta, por ejemplo con el filtro “3–4”).
+<code>_refrescar</code> solo llama a <code>setState</code>;
+<code>Hotel</code> no cambia.</p>
 <h3 id="cambio-mínimo-fuera-de-la-pantalla-m1">5.6 Cambio mínimo fuera
 de la pantalla (M1)</h3>
 <p><code>ReserveScreen</code> recibe un parámetro opcional; si no se
 envía, se comporta igual que antes.</p>
 <div class="sourceCode" id="cb7"><pre
-class="sourceCode dart"><code class="sourceCode dart"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> ReserveScreen(<span class="op">{</span><span class="kw">super</span><span class="op">.</span>key<span class="op">,</span> required <span class="kw">this</span><span class="op">.</span>hotel<span class="op">,</span> <span class="kw">this</span><span class="op">.</span>numeroInicial<span class="op">}</span>);</span>
+class="sourceCode dart"><code class="sourceCode dart"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> ReserveScreen({<span class="kw">super</span><span class="op">.</span>key<span class="op">,</span> required <span class="kw">this</span><span class="op">.</span>hotel<span class="op">,</span> <span class="kw">this</span><span class="op">.</span>numeroInicial});</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">@override</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> initState() <span class="op">{</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> initState() {</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">super</span><span class="op">.</span>initState();</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (widget<span class="op">.</span>numeroInicial <span class="op">!=</span> <span class="cn">null</span>) <span class="op">{</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (widget<span class="op">.</span>numeroInicial <span class="op">!=</span> <span class="cn">null</span>) {</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    _numeroHabitacionController<span class="op">.</span>text <span class="op">=</span> <span class="st">&#39;${widget.numeroInicial}&#39;</span>;</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="limpieza-visual-m5">5.7 Limpieza visual (M5)</h3>
 <ul>
 <li>Se eliminó <code>_EstadoChip</code>.</li>
@@ -382,9 +401,11 @@ presentación.</p>
 <h2 id="pruebas-realizadas">6. Pruebas realizadas</h2>
 <h3 id="pruebas-automatizadas-flutter-test">6.1 Pruebas automatizadas
 (<code>flutter test</code>)</h3>
-<p>Se agregó <code>test/rooms_screen_test.dart</code> con 4 pruebas de
-widget. Se ejecutaron con <code>flutter test</code> y <strong>todas
-pasan (5/5, incluida la prueba original de login)</strong>.</p>
+<p>Se agregó <code>test/rooms_screen_test.dart</code> con 5 pruebas de
+widget (más la prueba original de login: 6 en total). A1–A4 se
+ejecutaron con <code>flutter test</code> y pasan; A5 se agregó al
+integrar el repositorio y <strong>debe confirmarse ejecutando
+<code>flutter test</code></strong>.</p>
 <table>
 <colgroup>
 <col style="width: 8%" />
@@ -393,7 +414,7 @@ pasan (5/5, incluida la prueba original de login)</strong>.</p>
 <col style="width: 30%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>#</th>
 <th>Prueba</th>
 <th>Qué verifica</th>
@@ -401,33 +422,40 @@ pasan (5/5, incluida la prueba original de login)</strong>.</p>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>A1</td>
 <td>Muestra el resumen y el filtro</td>
 <td>Aparecen “Disponibles / Reservadas / Ocupadas”, el filtro “¿Cuántas
 personas?” y los 9 botones “Reservar”</td>
 <td><strong>Comprobado</strong></td>
 </tr>
-<tr>
+<tr class="even">
 <td>A2</td>
 <td>El filtro “3–4” deja solo las Suites</td>
 <td>Aparecen 2 avisos “Sin habitaciones disponibles” y 3 botones
 “Reservar”</td>
 <td><strong>Comprobado</strong></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>A3</td>
 <td>El botón “Reservar” abre la reserva con el número</td>
 <td>Se abre <code>ReserveScreen</code> y el campo número contiene
 “101”</td>
 <td><strong>Comprobado</strong></td>
 </tr>
-<tr>
+<tr class="even">
 <td>A4</td>
 <td>El estado vacío sugiere qué hacer</td>
 <td>Con las Suites reservadas y filtro “3–4”, aparece “No hay
 habitaciones disponibles” + “Ajusta el filtro…”</td>
 <td><strong>Comprobado</strong></td>
+</tr>
+<tr class="odd">
+<td>A5</td>
+<td>El botón “Actualizar” refleja cambios</td>
+<td>Se reserva la 101 directamente en <code>Hotel</code>, se pulsa
+“Actualizar” y la 101 desaparece; el resumen muestra 8 disponibles</td>
+<td><em>Pendiente de ejecutar</em></td>
 </tr>
 </tbody>
 </table>
@@ -443,7 +471,7 @@ habitaciones disponibles” + “Ajusta el filtro…”</td>
 <col style="width: 13%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>#</th>
 <th>Escenario</th>
 <th>Acción</th>
@@ -453,7 +481,7 @@ habitaciones disponibles” + “Ajusta el filtro…”</td>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>M1</td>
 <td>Uso normal</td>
 <td>Filtrar por 2 personas y reservar la 104 desde la lista</td>
@@ -462,7 +490,7 @@ aparece y el resumen se actualiza</td>
 <td><em>(pendiente)</em></td>
 <td>—</td>
 </tr>
-<tr>
+<tr class="even">
 <td>M2</td>
 <td>Datos incorrectos</td>
 <td>En la reserva precargada, poner 0 días</td>
@@ -471,7 +499,7 @@ de error</td>
 <td><em>(pendiente)</em></td>
 <td>—</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>M3</td>
 <td>Error de negocio</td>
 <td>Reservar dos veces la misma habitación</td>
@@ -480,7 +508,7 @@ disponible.”</td>
 <td><em>(pendiente)</em></td>
 <td>—</td>
 </tr>
-<tr>
+<tr class="even">
 <td>M4</td>
 <td>Otro tamaño de pantalla</td>
 <td>Ejecutar en ventana angosta (≈360 px) y ancha</td>
@@ -488,10 +516,11 @@ disponible.”</td>
 <td><em>(pendiente)</em></td>
 <td>—</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>M5</td>
 <td>Refresco manual</td>
-<td>Arrastrar hacia abajo en la lista</td>
+<td>Pulsar “Actualizar” en la barra superior (y, en móvil/emulador,
+arrastrar hacia abajo)</td>
 <td>La vista se reconstruye sin errores</td>
 <td><em>(pendiente)</em></td>
 <td>—</td>
@@ -515,7 +544,7 @@ después (trazabilidad)</h2>
 <col style="width: 19%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>Problema inicial</th>
 <th>Cambio implementado</th>
 <th>Evidencia</th>
@@ -523,7 +552,7 @@ después (trazabilidad)</h2>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>P2 — sin acción de reservar</td>
 <td>Botón “Reservar” por habitación + <code>numeroInicial</code> en
 <code>ReserveScreen</code></td>
@@ -531,29 +560,29 @@ después (trazabilidad)</h2>
 de código</td>
 <td><strong>Comprobado</strong></td>
 </tr>
-<tr>
+<tr class="even">
 <td>P3 — no ayuda a elegir por huéspedes</td>
 <td>Filtro de personas con <code>ChoiceChip</code></td>
 <td>Prueba automatizada <strong>A2</strong> (filtro “3–4” deja 3
 Suites)</td>
 <td><strong>Comprobado</strong></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>P4 — sin panorama general</td>
 <td>Resumen de disponibles/reservadas/ocupadas</td>
 <td>Prueba automatizada <strong>A1</strong> (aparecen los 3
 contadores)</td>
 <td><strong>Comprobado</strong></td>
 </tr>
-<tr>
+<tr class="even">
 <td>P5 — datos desactualizados</td>
 <td><code>StatefulWidget</code> + <code>setState</code> al volver +
-<code>RefreshIndicator</code></td>
-<td>Código en <code>rooms_screen.dart</code> + prueba manual M1/M5
-pendiente</td>
+<code>RefreshIndicator</code> + botón “Actualizar”</td>
+<td>Código en <code>rooms_screen.dart</code> + prueba A5 y manuales
+M1/M5 pendientes</td>
 <td><strong>Observado</strong></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>P1/P6 — chip redundante y textos</td>
 <td>Se quitó el chip; ícono de persona; plurales; estado vacío con
 sugerencia</td>
@@ -585,8 +614,8 @@ tocar la lógica de negocio; separar presentación de reglas permite
 cambiar la experiencia sin riesgo.</li>
 <li><strong>Próxima versión:</strong> permitir ordenar por capacidad,
 mostrar el estado de reservadas/ocupadas también en la lista (con el
-chip recuperado de forma útil) y agregar una prueba de widget
-automatizada para el filtro.</li>
+chip recuperado de forma útil) y hacer una prueba breve con un compañero
+para medir si el filtro reduce el tiempo de elección.</li>
 </ul>
 </body>
 </html>

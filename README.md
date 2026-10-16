@@ -43,9 +43,16 @@ hotel_cartagena_flutter/
 │       ├── checkin_screen.dart
 │       └── checkout_screen.dart
 ├── test/
-│   └── widget_test.dart
+│   ├── widget_test.dart          # Prueba original (login)
+│   └── rooms_screen_test.dart    # Pruebas del rediseño de RoomsScreen
+├── web/                          # Plataforma web (para `flutter run -d chrome`)
+├── evidencias/                   # Capturas y registro de pruebas (PRUEBAS.md)
+├── informe/                      # Informe breve (md, html, docx, pdf)
+├── presentacion/                 # Presentación de la actividad de rediseño
+├── actividad_anterior/           # PDFs de "Descubriendo el código" (Grupo 4)
 ├── pubspec.yaml
 ├── analysis_options.yaml
+├── INSTALACION.md
 └── README.md
 ```
 
@@ -70,7 +77,10 @@ hotel_cartagena_flutter/
 3. **Menú principal** (`home_screen.dart`): cuadrícula con accesos a
    las cuatro operaciones del sistema, y botón de cerrar sesión.
 4. **Consultar habitaciones** (`rooms_screen.dart`): lista las
-   habitaciones disponibles agrupadas por tipo (RF03).
+   habitaciones disponibles agrupadas por tipo (RF03). **Rediseñada**
+   en la actividad de septiembre (ver sección 8): resumen del hotel,
+   filtro por número de personas, botón "Reservar" por habitación y
+   actualización automática/manual.
 5. **Reservar habitación** (`reserve_screen.dart`): formulario con los
    datos del huésped, número de habitación y días (RF04, RF05).
 6. **Check-in** (`checkin_screen.dart`): número de habitación y
@@ -91,9 +101,11 @@ que todas comparten la misma información mientras la app esté abierta.
 [SDK de Flutter](https://docs.flutter.dev/get-started/install) y un
 dispositivo/emulador, un navegador o soporte de escritorio habilitado.
 
-Como este código se entrega solo con la carpeta `lib/`, `test/` y los
-archivos de configuración (sin las carpetas nativas `android/`, `ios/`,
-`web/`, que Flutter genera automáticamente), sigue estos pasos:
+El repositorio ya incluye la carpeta `web/`, así que para correrlo en
+Chrome basta con `flutter pub get` y `flutter run -d chrome`. Para
+otras plataformas (`android/`, `windows/`, etc.) ejecuta una vez
+`flutter create --project-name hotel_cartagena_flutter .` en la raíz
+(ver INSTALACION.md). La alternativa manual es:
 
 1. Crear un proyecto Flutter nuevo con el mismo nombre:
    ```bash
@@ -162,11 +174,12 @@ Todo el código fuente incluye comentarios en español explicando:
   optó por crear una única instancia de `Hotel` en `main.dart` y
   pasarla por el constructor de cada pantalla. Es la solución más
   sencilla para un proyecto académico de este tamaño.
-- **Refrescar la lista de habitaciones disponibles:** como
-  `RoomsScreen` vuelve a llamar a `hotel.consultarDisponiblesAgrupadas()`
-  cada vez que se construye, basta con navegar a esa pantalla de nuevo
-  (por ejemplo, volviendo al menú principal y entrando otra vez) para
-  ver los cambios hechos desde otra ventana.
+- **Refrescar la lista de habitaciones disponibles:** en la versión
+  original había que salir y volver a entrar a la pantalla. En el
+  rediseño, `RoomsScreen` es `StatefulWidget`: se reconstruye al volver
+  de `ReserveScreen` y tiene un botón "Actualizar" en la barra superior
+  (además del gesto `RefreshIndicator`, que en Chrome/escritorio no
+  funciona con el mouse).
 - **Validaciones duplicadas entre la interfaz y `Hotel`:** algunas
   validaciones simples (como "los días deben ser mayores que cero")
   se repiten en el formulario y en `Hotel`. Esto es intencional: la
@@ -224,5 +237,32 @@ Grupo 4 en la actividad "Descubriendo el código de Hotel Cartagena".
 | Sin resultados | Reservar las 3 Suites y filtrar por 3–4 personas. | Estado vacío con sugerencia, sin errores. |
 | Otro tamaño de pantalla | Ejecutar en ventana angosta (≈360 px) y ancha. | Sin desbordes; contenido legible. |
 
-> Estado de cada mejora: *propuesta*. Se marcará como **comprobado**,
-> **observado** o **esperado** en el informe final, según la evidencia obtenida.
+### 8.6 Estado de la implementación
+
+Las 5 mejoras están **implementadas** en `lib/screens/rooms_screen.dart`
+(más el parámetro `numeroInicial` en `reserve_screen.dart`).
+`lib/services/hotel.dart` **no se modificó**.
+
+| Mejora | Estado | Evidencia |
+|---|---|---|
+| 1. Botón Reservar con número precargado | Comprobado | Prueba A3 (`test/rooms_screen_test.dart`) |
+| 2. Filtro "¿Cuántas personas?" | Comprobado | Prueba A2 |
+| 3. Resumen superior | Comprobado | Prueba A1 |
+| 4. Actualización automática y manual (gesto + botón "Actualizar") | Observado | Código; prueba A5 y manuales M1/M6 por ejecutar |
+| 5. Limpieza visual y textos | Comprobado | Pruebas A1 y A4 + capturas antes/después |
+| Beneficio "elegir más rápido" | Esperado | Requiere prueba con un compañero/usuario |
+
+Detalle completo en [`informe/INFORME_RoomsScreen.md`](informe/INFORME_RoomsScreen.md)
+y registro de pruebas en [`evidencias/PRUEBAS.md`](evidencias/PRUEBAS.md).
+
+## 9. Entregables de la actividad
+
+| Entregable (guía) | Dónde está |
+|---|---|
+| Proyecto Flutter actualizado | `lib/`, `test/`, `web/`, `pubspec.yaml` |
+| Informe breve de diagnóstico y mejora | `informe/` (md, html, docx, pdf) |
+| Presentación académica | `presentacion/` |
+| Evidencias visuales y funcionales | `evidencias/` (capturas 01–07) |
+| Registro de pruebas | `evidencias/PRUEBAS.md` |
+
+Pruebas automatizadas: `flutter test` (6 pruebas: 1 de login + 5 de RoomsScreen).

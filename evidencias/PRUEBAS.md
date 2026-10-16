@@ -5,7 +5,10 @@
 
 ## A. Pruebas automatizadas (`flutter test`)
 
-Comando: `flutter test` → **5/5 tests pasan** (4 de `rooms_screen_test.dart` + 1 original de login).
+Comando: `flutter test` → 6 pruebas (5 de `rooms_screen_test.dart` + 1 original de login).
+A1–A4 ya se habían comprobado; **A5 es nueva y hay que volver a correr `flutter test` para confirmarla.**
+
+Resultado de la última ejecución: ______ / 6 pasan.
 
 | # | Prueba | Qué verifica | Resultado | ¿Cumple? |
 |---|--------|--------------|-----------|----------|
@@ -13,6 +16,7 @@ Comando: `flutter test` → **5/5 tests pasan** (4 de `rooms_screen_test.dart` +
 | A2 | El filtro "3–4" deja solo las Suites | Aparecen 2 avisos "Sin habitaciones disponibles" y 3 botones "Reservar" | **Comprobado** | ✅ |
 | A3 | El botón "Reservar" abre la reserva con el número | Se abre `ReserveScreen` y el campo número contiene "101" | **Comprobado** | ✅ |
 | A4 | El estado vacío sugiere qué hacer | Con las Suites reservadas y filtro "3–4", aparece "No hay habitaciones disponibles" + "Ajusta el filtro…" | **Comprobado** | ✅ |
+| A5 | El botón "Actualizar" refleja cambios | Se reserva la 101 en `Hotel`, se pulsa "Actualizar": la 101 desaparece y el resumen muestra 8 disponibles | *(pendiente)* | — |
 
 ## B. Pruebas manuales (en Chrome)
 
@@ -23,7 +27,7 @@ Comando: `flutter test` → **5/5 tests pasan** (4 de `rooms_screen_test.dart` +
 | M3 | Error de negocio | Reservar dos veces la misma habitación | `HotelException`: "La habitación X no está disponible." | *(pendiente)* | — | |
 | M4 | Sin resultados | Reservar las 3 Suites y filtrar por 3–4 personas | Estado vacío con sugerencia, sin errores | *(pendiente)* | — | `06_...` |
 | M5 | Otro tamaño de pantalla | Ejecutar en ventana angosta (≈360 px) y ancha | Sin desbordes; contenido legible | *(pendiente)* | — | `07_...` |
-| M6 | Refresco manual | Arrastrar hacia abajo en la lista | La vista se reconstruye sin errores | *(pendiente)* | — | |
+| M6 | Refresco manual | Pulsar "Actualizar" en la barra superior (en emulador táctil, también arrastrar hacia abajo) | La vista se reconstruye sin errores | *(pendiente)* | — | |
 | M7 | Resumen | Reservar una habitación | El contador de "Disponibles" baja y el de "Reservadas" sube | *(pendiente)* | — | `02_...` |
 
 ## Observaciones
@@ -34,5 +38,5 @@ Comando: `flutter test` → **5/5 tests pasan** (4 de `rooms_screen_test.dart` +
 ## Conclusión
 
 - **Comprobado:** A1, A2, A3, A4 (verificados por `flutter test`).
-- **Observado:** el cambio a `StatefulWidget` y el `RefreshIndicator` están en el código; falta verificar el comportamiento en Chrome (M1, M6, M7).
+- **Observado:** el cambio a `StatefulWidget`, el `RefreshIndicator` y el botón "Actualizar" están en el código; falta verificar el comportamiento en Chrome (M1, M6, M7).
 - **Esperado:** que el filtro reduce el tiempo de elección (requiere prueba con usuarios).

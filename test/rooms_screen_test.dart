@@ -78,4 +78,25 @@ void main() {
     expect(find.text('No hay habitaciones disponibles'), findsOneWidget);
     expect(find.textContaining('Ajusta el filtro'), findsOneWidget);
   });
+
+  testWidgets('El botón "Actualizar" refleja cambios hechos en Hotel',
+      (WidgetTester tester) async {
+    final hotel = Hotel();
+    await tester.pumpWidget(MaterialApp(home: RoomsScreen(hotel: hotel)));
+    expect(find.text('Habitación 101'), findsOneWidget);
+
+    // Se reserva la 101 "desde otra pantalla" (directamente en Hotel).
+    hotel.reservarHabitacion(
+      huesped: Huesped(nombre: 'Test', documento: '000'),
+      numeroHabitacion: 101,
+      dias: 1,
+    );
+
+    await tester.tap(find.byTooltip('Actualizar'));
+    await tester.pumpAndSettle();
+
+    // La 101 ya no aparece y el resumen cuenta 8 disponibles.
+    expect(find.text('Habitación 101'), findsNothing);
+    expect(find.text('8'), findsOneWidget);
+  });
 }

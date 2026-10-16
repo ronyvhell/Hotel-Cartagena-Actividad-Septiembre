@@ -18,7 +18,8 @@ import 'reserve_screen.dart';
 /// 3. Resumen superior con habitaciones disponibles, reservadas y
 ///    ocupadas, para tener un panorama general del hotel.
 /// 4. Es [StatefulWidget]: se actualiza al volver de una reserva y
-///    admite [RefreshIndicator] para refrescar manualmente.
+///    admite [RefreshIndicator] (gesto) y un botón "Actualizar" en la
+///    barra superior para refrescar manualmente.
 /// 5. Limpieza visual: se quitó el chip de estado redundante, la
 ///    capacidad usa ícono de persona, se corrigieron los plurales y el
 ///    estado vacío sugiere qué hacer.
@@ -94,10 +95,25 @@ class _RoomsScreenState extends State<RoomsScreen> {
     final minimo = _filtros[_filtroSeleccionado].minimo;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Habitaciones disponibles')),
+      appBar: AppBar(
+        title: const Text('Habitaciones disponibles'),
+        actions: [
+          // Botón visible para refrescar: en Chrome/escritorio el gesto
+          // de "arrastrar hacia abajo" no funciona con el mouse, así que
+          // se ofrece también esta alternativa.
+          IconButton(
+            tooltip: 'Actualizar',
+            icon: const Icon(Icons.refresh),
+            onPressed: _refrescar,
+          ),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: _refrescar,
         child: ListView(
+          // Permite el gesto de refrescar aunque la lista sea corta
+          // (por ejemplo, con el filtro "3–4" aplicado).
+          physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
           children: [
             _ResumenHotel(hotel: widget.hotel),

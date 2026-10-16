@@ -36,7 +36,7 @@ Se analizó el código original (`rooms_screen.dart`, versión del repositorio b
 | M1 | P2 | Botón **Reservar** en cada habitación que abre `ReserveScreen` con el número precargado | Menos pasos y cero errores al digitar el número | Reservar desde la lista sin escribir el número; contar toques antes/después |
 | M2 | P3 | Filtro **"¿Cuántas personas?"** (1 · 2 · 3–4) | Ver solo habitaciones que sirven al huésped | Seleccionar "3–4" y verificar que solo aparecen Suites |
 | M3 | P4 | **Resumen superior** con disponibles, reservadas y ocupadas | Panorama del hotel de un vistazo | Reservar/check-in y verificar que los contadores cambian |
-| M4 | P5 | **Actualización automática y manual** (`StatefulWidget` + `RefreshIndicator`) | La lista siempre refleja el estado real | Reservar desde la lista y comprobar que la habitación desaparece al volver |
+| M4 | P5 | **Actualización automática y manual** (`StatefulWidget` + `RefreshIndicator` + botón "Actualizar") | La lista siempre refleja el estado real | Reservar desde la lista y comprobar que la habitación desaparece al volver |
 | M5 | P1 y P6 | **Limpieza visual y textos** | Pantalla más limpia y fácil de leer | Comparar capturas antes/después; probar en pantalla pequeña sin desbordes |
 
 ---
@@ -67,9 +67,10 @@ Se analizó el código original (`rooms_screen.dart`, versión del repositorio b
 ```
 
 **Decisiones de diseño:**
+
 - **Jerarquía:** el resumen va arriba (información de contexto) y el filtro justo debajo, antes de la lista.
 - **Acción principal:** el botón "Reservar" queda a la derecha de cada fila, con estilo `FilledButton.tonal` para no competir con el botón principal de confirmación de `ReserveScreen`.
-- **Estados de interacción:** el filtro resalta la opción elegida (`ChoiceChip.selected`); al volver de la reserva la lista se reconstruye; `RefreshIndicator` permite actualizar manualmente.
+- **Estados de interacción:** el filtro resalta la opción elegida (`ChoiceChip.selected`); al volver de la reserva la lista se reconstruye; `RefreshIndicator` (gesto táctil) y un botón "Actualizar" en la barra superior (útil con mouse en Chrome/escritorio) permiten actualizar manualmente.
 - **Estado vacío:** si no hay resultados, se muestra un mensaje con sugerencia ("Ajusta el filtro…").
 - **Adaptabilidad:** el resumen usa `Row` + `Expanded` (3 tarjetas que se reparten el ancho) y la lista usa `ListView` con `padding`, para evitar desbordes en pantallas angostas.
 
@@ -129,14 +130,34 @@ Future<void> _irAReservar(Habitacion habitacion) async {
 }
 ```
 
-### 5.5 `RefreshIndicator` (M4)
+### 5.5 `RefreshIndicator` y botón "Actualizar" (M4)
 
 ```dart
+appBar: AppBar(
+  title: const Text('Habitaciones disponibles'),
+  actions: [
+    IconButton(
+      tooltip: 'Actualizar',
+      icon: const Icon(Icons.refresh),
+      onPressed: _refrescar,
+    ),
+  ],
+),
 body: RefreshIndicator(
   onRefresh: _refrescar,
-  child: ListView(padding: const EdgeInsets.all(16), children: [ ... ]),
+  child: ListView(
+    physics: const AlwaysScrollableScrollPhysics(),
+    padding: const EdgeInsets.all(16),
+    children: [ ... ],
+  ),
 ),
 ```
+
+En web y escritorio, Flutter no permite arrastrar la lista con el mouse, así que el
+gesto de "jalar hacia abajo" solo sirve en pantallas táctiles. Por eso se agregó el
+botón "Actualizar" y `AlwaysScrollableScrollPhysics` (para que el gesto funcione aunque
+la lista sea corta, por ejemplo con el filtro "3–4"). `_refrescar` solo llama a
+`setState`; `Hotel` no cambia.
 
 ### 5.6 Cambio mínimo fuera de la pantalla (M1)
 `ReserveScreen` recibe un parámetro opcional; si no se envía, se comporta igual que antes.
@@ -167,8 +188,9 @@ void initState() {
 
 ### 6.1 Pruebas automatizadas (`flutter test`)
 
-Se agregó `test/rooms_screen_test.dart` con 4 pruebas de widget. Se ejecutaron con
-`flutter test` y **todas pasan (5/5, incluida la prueba original de login)**.
+Se agregó `test/rooms_screen_test.dart` con 5 pruebas de widget (más la prueba
+original de login: 6 en total). A1–A4 se ejecutaron con `flutter test` y pasan;
+A5 se agregó al integrar el repositorio y **debe confirmarse ejecutando `flutter test`**.
 
 | # | Prueba | Qué verifica | Resultado |
 |---|--------|--------------|-----------|
@@ -176,6 +198,7 @@ Se agregó `test/rooms_screen_test.dart` con 4 pruebas de widget. Se ejecutaron 
 | A2 | El filtro "3–4" deja solo las Suites | Aparecen 2 avisos "Sin habitaciones disponibles" y 3 botones "Reservar" | **Comprobado** |
 | A3 | El botón "Reservar" abre la reserva con el número | Se abre `ReserveScreen` y el campo número contiene "101" | **Comprobado** |
 | A4 | El estado vacío sugiere qué hacer | Con las Suites reservadas y filtro "3–4", aparece "No hay habitaciones disponibles" + "Ajusta el filtro…" | **Comprobado** |
+| A5 | El botón "Actualizar" refleja cambios | Se reserva la 101 directamente en `Hotel`, se pulsa "Actualizar" y la 101 desaparece; el resumen muestra 8 disponibles | *Pendiente de ejecutar* |
 
 ### 6.2 Pruebas manuales (por ejecutar en Chrome)
 
@@ -185,7 +208,7 @@ Se agregó `test/rooms_screen_test.dart` con 4 pruebas de widget. Se ejecutaron 
 | M2 | Datos incorrectos | En la reserva precargada, poner 0 días | El formulario y `Hotel` rechazan la reserva con mensaje de error | *(pendiente)* | — |
 | M3 | Error de negocio | Reservar dos veces la misma habitación | `HotelException`: "La habitación X no está disponible." | *(pendiente)* | — |
 | M4 | Otro tamaño de pantalla | Ejecutar en ventana angosta (≈360 px) y ancha | Sin desbordes; contenido legible | *(pendiente)* | — |
-| M5 | Refresco manual | Arrastrar hacia abajo en la lista | La vista se reconstruye sin errores | *(pendiente)* | — |
+| M5 | Refresco manual | Pulsar "Actualizar" en la barra superior (y, en móvil/emulador, arrastrar hacia abajo) | La vista se reconstruye sin errores | *(pendiente)* | — |
 
 > **Nota de rigor académico:** las pruebas A1–A4 son **comprobadas** por ejecución
 > automática. Las M1–M5 quedan como *esperadas* hasta ejecutar la app en Chrome y
@@ -200,7 +223,7 @@ Se agregó `test/rooms_screen_test.dart` con 4 pruebas de widget. Se ejecutaron 
 | P2 — sin acción de reservar | Botón "Reservar" por habitación + `numeroInicial` en `ReserveScreen` | Prueba automatizada **A3** (abre con "101") + fragmento de código | **Comprobado** |
 | P3 — no ayuda a elegir por huéspedes | Filtro de personas con `ChoiceChip` | Prueba automatizada **A2** (filtro "3–4" deja 3 Suites) | **Comprobado** |
 | P4 — sin panorama general | Resumen de disponibles/reservadas/ocupadas | Prueba automatizada **A1** (aparecen los 3 contadores) | **Comprobado** |
-| P5 — datos desactualizados | `StatefulWidget` + `setState` al volver + `RefreshIndicator` | Código en `rooms_screen.dart` + prueba manual M1/M5 pendiente | **Observado** |
+| P5 — datos desactualizados | `StatefulWidget` + `setState` al volver + `RefreshIndicator` + botón "Actualizar" | Código en `rooms_screen.dart` + prueba A5 y manuales M1/M5 pendientes | **Observado** |
 | P1/P6 — chip redundante y textos | Se quitó el chip; ícono de persona; plurales; estado vacío con sugerencia | Pruebas automatizadas **A1** y **A4** + comparativa visual | **Comprobado** |
 
 > **Lectura de la tabla:** "Comprobado" = verificado por ejecución automática;
@@ -215,4 +238,4 @@ Se agregó `test/rooms_screen_test.dart` con 4 pruebas de widget. Se ejecutaron 
 - **M4** garantiza que la información mostrada sea confiable.
 - **M5** reduce el ruido visual y mejora la legibilidad.
 - **Aprendizaje:** una mejora de interfaz no requiere tocar la lógica de negocio; separar presentación de reglas permite cambiar la experiencia sin riesgo.
-- **Próxima versión:** permitir ordenar por capacidad, mostrar el estado de reservadas/ocupadas también en la lista (con el chip recuperado de forma útil) y agregar una prueba de widget automatizada para el filtro.
+- **Próxima versión:** permitir ordenar por capacidad, mostrar el estado de reservadas/ocupadas también en la lista (con el chip recuperado de forma útil) y hacer una prueba breve con un compañero para medir si el filtro reduce el tiempo de elección.
