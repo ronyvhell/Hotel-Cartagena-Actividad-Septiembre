@@ -206,8 +206,8 @@ La pantalla trabajada en la actividad de rediseño es
 
 Flutter puede compilar la app a una página web estática (`build/web`), y eso
 sí se puede alojar en Vercel. Vercel no trae Flutter instalado, así que el
-archivo `vercel.json` de este repo lo descarga en cada despliegue y luego
-ejecuta `flutter build web --release`.
+archivo `vercel.json` ejecuta `vercel-install.sh` (que descarga Flutter) y luego
+`flutter build web --release`.
 
 1. Entra a <https://vercel.com/new> e importa el repositorio
    `ronyvhell/Hotel-Cartagena-Actividad-Septiembre`.
