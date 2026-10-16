@@ -261,7 +261,7 @@ y registro de pruebas en [`evidencias/PRUEBAS.md`](evidencias/PRUEBAS.md).
 |---|---|
 | Proyecto Flutter actualizado | `lib/`, `test/`, `web/`, `pubspec.yaml` |
 | Informe breve de diagnóstico y mejora | `informe/` (md, html, docx, pdf) |
-| Presentación académica | `presentacion/` |
+| Presentación académica | `presentacion/Grupo4_RoomsScreen_Rediseno.pdf` (y su `.html`) |
 | Evidencias visuales y funcionales | `evidencias/` (capturas 01–07) |
 | Registro de pruebas | `evidencias/PRUEBAS.md` |
 

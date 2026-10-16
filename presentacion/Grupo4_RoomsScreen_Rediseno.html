@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rediseño de RoomsScreen · Grupo 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafaf9; --ink:#111113; --text:#2a2a2e; --muted:#5c5c63; --line:#e6e4e1;
+  --accent:#4f46e5; --accent-soft:#eef0ff; --accent-ink:#3730a3; --accent-dark:#a5b4fc;
+  --dark:#121214;
+  --ok:#15803d; --ok-bg:#dcfce7; --warn:#b45309; --warn-bg:#fef3c7; --bad:#b91c1c; --bad-bg:#fee2e2;
+  --info:#1d4ed8; --info-bg:#dbeafe;
+  --mono:"JetBrains Mono","DejaVu Sans Mono",Consolas,monospace;
+}
+@page{size:1280px 720px;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#d6d3d1}
+body{font-family:Inter,"Segoe UI",system-ui,sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+.slide{width:1280px;height:720px;background:var(--bg);position:relative;overflow:hidden;
+  padding:46px 87px 0;margin:0 auto 24px;page-break-after:always;break-after:page}
+@media print{html,body{background:var(--bg)}.slide{margin:0}}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.pill{position:absolute;top:36px;right:87px;border:1px solid var(--line);background:#fff;border-radius:999px;
+  padding:7px 15px;font-size:13.5px;font-weight:500;color:var(--ink);display:flex;align-items:center;gap:8px}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+h1{font-size:54px;line-height:1.05;font-weight:800;letter-spacing:-.035em;color:var(--ink);margin-top:34px}
+h1 em{font-style:normal;color:var(--accent)}
+.lead{font-size:19px;line-height:1.5;color:var(--text);margin-top:16px;max-width:860px}
+.foot{position:absolute;left:87px;right:87px;bottom:30px;display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+code,.c{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);color:var(--accent-ink);padding:1px 6px;border-radius:5px}
+b,strong{color:var(--ink);font-weight:700}
+
+/* grid + cards */
+.grid{display:grid;gap:22px;margin-top:30px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px}
+.card.acc{border-left:4px solid var(--accent)}
+.card .lab{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.card h3{font-size:21px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:8px}
+.card p{font-size:15.5px;line-height:1.5;color:var(--text)}
+.card .ev{margin-top:12px;font-size:12.5px;color:var(--muted)}
+.card.sm{padding:18px 20px}.card.sm h3{font-size:17px}.card.sm p{font-size:14px}
+
+/* code block */
+.code{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 24px;font-family:var(--mono);
+  font-size:14.5px;line-height:1.65;color:#1f1f23;white-space:pre}
+.code .k{color:var(--accent-ink);font-weight:600}
+.code .s{color:#0f766e}
+.code .m{color:#8a8a92}
+.code .add{background:#dcfce7;color:#166534;border-radius:4px;padding:1px 4px}
+.code .del{background:#fee2e2;color:#b91c1c;text-decoration:line-through;border-radius:4px;padding:1px 4px}
+.clab{font-size:12.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.clab.a{color:var(--accent)}
+
+/* rows (preguntas / tablas) */
+.rows{margin-top:26px;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row .n{font-size:13px;font-weight:700;color:var(--accent);padding-top:3px}
+.row .q{font-size:15.5px;font-weight:700;color:var(--ink)}
+.row .a{font-size:14px;color:var(--text);margin-top:3px;line-height:1.45}
+
+table.t{width:100%;border-collapse:collapse;margin-top:26px;font-size:14.5px}
+table.t th{text-align:left;font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0 12px 10px 0;border-bottom:1px solid var(--line)}
+table.t td{padding:11px 12px 11px 0;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.4}
+table.t td.num{font-weight:700;color:var(--accent);width:44px}
+.st{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.st.ok{background:var(--ok-bg);color:var(--ok)}.st.obs{background:var(--info-bg);color:var(--info)}
+.st.esp{background:var(--warn-bg);color:var(--warn)}.st.pen{background:#f1f1f3;color:#55555c}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;min-height:150px}
+.step .n{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.06em}
+.step h4{font-size:16.5px;font-weight:700;color:var(--ink);margin:8px 0 6px}
+.step p{font-size:14px;line-height:1.45}
+
+/* flow */
+.flow{display:flex;align-items:center;gap:10px;margin-top:34px;flex-wrap:wrap}
+.flow span{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-size:14.5px;font-weight:500;color:var(--ink)}
+.flow span.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.flow i{font-style:normal;color:var(--muted)}
+
+/* cover */
+.cover{background:var(--dark);color:#e7e7ea}
+.cover .kicker{color:#a1a1aa}
+.cover .tr{position:absolute;top:46px;right:87px;font-size:14px;color:#a1a1aa;letter-spacing:.02em}
+.cover h1{font-size:92px;color:#fff;margin-top:120px;letter-spacing:-.045em}
+.cover h1 em{color:var(--accent-dark)}
+.cover .lead{color:#c9c9cf;font-size:22px;max-width:980px}
+.cover .team{display:flex;gap:42px;margin-top:62px}
+.cover .team div{width:230px;border-top:1px solid #3a3a40;padding-top:14px;font-size:16.5px;color:#f4f4f5}
+.cover .team small{display:block;font-size:13px;color:#9b9ba3;margin-top:4px}
+.cover .foot{color:#a1a1aa}
+
+/* ---------- teléfono ---------- */
+.phone{width:292px;height:566px;border:10px solid #141416;border-radius:40px;background:#141416;position:relative;
+  box-shadow:0 24px 50px -24px rgba(0,0,0,.35)}
+.screen{width:100%;height:100%;background:#fff;border-radius:30px;overflow:hidden;font-size:11px;color:#1b1b1f;position:relative}
+.ab{height:58px;background:#eef0fb;display:flex;align-items:center;gap:10px;padding:14px 14px 0;font-size:13.5px;font-weight:600;position:relative}
+.ab .sp{flex:1}
+.ic{width:15px;height:15px;flex:none;display:inline-block;vertical-align:middle}
+.body{padding:10px}
+.mc{border:1px solid #e3e1ea;border-radius:10px;margin-bottom:9px;overflow:visible;position:relative}
+.mc .h{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;font-weight:700;font-size:11.5px;position:relative}
+.mc .r{display:flex;align-items:center;gap:9px;padding:7px 11px;border-top:1px solid #f0eff3;position:relative}
+.mc .r .tx{flex:1;line-height:1.25}
+.mc .r .tx .t{font-size:11.5px}
+.mc .r .tx .s{font-size:9.5px;color:#55555c;display:flex;align-items:center;gap:3px;position:relative}
+.chipd{background:#e5f6ea;color:#15803d;font-weight:600;font-size:9px;padding:3px 7px;border-radius:7px;position:relative}
+.btn-t{background:#e2e3fb;color:#2e2a8c;font-weight:600;font-size:10.5px;padding:6px 12px;border-radius:999px;position:relative}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:9px;position:relative}
+.sum div{border:1px solid #e3e1ea;border-radius:10px;padding:7px 0 6px;text-align:center}
+.sum b{display:block;font-size:17px;font-weight:600;color:#1b1b1f;margin:1px 0}
+.sum small{font-size:8.5px;color:#55555c}
+.fl{font-size:12px;font-weight:600;margin:2px 0 6px;position:relative}
+.chips{display:flex;gap:5px;margin-bottom:10px;position:relative}
+.chips span{border:1px solid #c9c7d2;border-radius:8px;padding:4px 9px;font-size:10.5px;display:flex;align-items:center;gap:3px}
+.chips span.sel{background:#e2e3fb;border-color:#e2e3fb;color:#2e2a8c;font-weight:600}
+.mk{position:absolute;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px #fff;z-index:5;font-family:Inter,sans-serif}
+.mk.red{background:#dc2626}
+.pcap{font-size:12.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;text-align:center}
+.pcap.a{color:var(--accent)}
+
+/* wireframe */
+.wf{width:292px;height:446px;border:2px dashed #b9b6c4;border-radius:36px;padding:16px;background:#fff;position:relative}
+.wf .blk{border-radius:10px;background:#f1f0f5;margin-bottom:8px;display:flex;align-items:center;justify-content:center;
+  font-size:11.5px;font-weight:600;color:#5c5c63;text-align:center}
+.wf .blk.a{background:var(--accent-soft);color:var(--accent-ink);border:1px solid #d7dafc}
+
+/* legend list */
+.leg{display:flex;flex-direction:column;gap:14px}
+.leg div{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start}
+.leg .mk{position:static;box-shadow:none}
+.leg p{font-size:15px;line-height:1.45}
+.leg p b{display:block;font-size:15.5px}
+ul.b{list-style:none;margin-top:22px}
+ul.b li{position:relative;padding-left:24px;font-size:17.5px;line-height:1.5;margin-bottom:16px}
+ul.b li::before{content:"";position:absolute;left:4px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.big{font-size:64px;font-weight:800;letter-spacing:-.04em;color:var(--accent);line-height:1}
+</style>
+</head>
+<body>
+
+<!-- SVG icon sprites -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20z" fill="currentColor"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M6 3h12v18h2v2H4v-2h2zm2 2v16h8V5zm6 7h1.6v1.6H14z" fill="#45454c"/></symbol>
+    <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="#45454c"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6z" fill="#45454c"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M17.6 6.4A8 8 0 1 0 19.7 14h-2.1a6 6 0 1 1-1.4-6.2L13 11h7V4z" fill="currentColor"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M7.4 15.4 12 10.8l4.6 4.6L18 14l-6-6-6 6z" fill="#45454c"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z" fill="currentColor"/></symbol>
+    <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#22c55e"/><path d="m10 15.2-3-3-1.1 1.1 4.1 4.1 8-8L17 8.3z" fill="#fff"/></symbol>
+    <symbol id="i-ev" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="#f59e0b"/><rect x="5" y="9" width="14" height="10" fill="#fff"/><path d="m10.5 17-2.5-2.5 1-1 1.5 1.5 4-4 1 1z" fill="#f59e0b"/></symbol>
+    <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 7h2v6h7V8h6a3 3 0 0 1 3 3v8h-2v-2H5v2H3z" fill="#ef4444"/><circle cx="8" cy="10.5" r="2" fill="#ef4444"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#45454c" stroke-width="2"/><path d="M11 10h2v7h-2zm0-3h2v2h-2z" fill="#45454c"/></symbol>
+  </defs>
+</svg>
+
+<!-- 01 · PORTADA -->
+<section class="slide cover">
+  <div class="kicker">De comprender el código a transformar la experiencia · Grupo 4</div>
+  <div class="tr">Hotel Cartagena · Flutter</div>
+  <h1>De mirar a <em>reservar</em></h1>
+  <p class="lead">Rediseño de RoomsScreen: encontrar una habitación que le sirva al huésped y reservarla sin equivocarse de número.</p>
+  <div class="team">
+    <div>Rony Valdelamar<small>Grupo 4</small></div>
+    <div>Jair Sánchez Pérez<small>Grupo 4</small></div>
+    <div>Victor Rocha Ramos<small>Grupo 4</small></div>
+    <div>Aníbal Meza Anaya<small>Grupo 4</small></div>
+  </div>
+  <div class="foot"><span>lib/screens/rooms_screen.dart</span><span>01</span></div>
+</section>
+
+<!-- 02 · LA PANTALLA Y SU PROPÓSITO -->
+<section class="slide">
+  <div class="kicker">01 · La pantalla y su propósito</div>
+  <h1>¿Para qué sirve <em>RoomsScreen</em>?</h1>
+  <p class="lead">Es la ventana donde el recepcionista consulta qué habitaciones están libres antes de ofrecerle una al huésped.</p>
+  <div class="grid g3">
+    <div class="card acc"><div class="lab">Requisito</div><h3>RF03</h3><p>Consultar las habitaciones disponibles, agrupadas por tipo: Sencilla, Doble y Suite.</p></div>
+    <div class="card acc"><div class="lab">Usuario</div><h3>Recepcionista</h3><p>Atiende al huésped en el mostrador y necesita decidir rápido qué habitación le sirve.</p></div>
+    <div class="card acc"><div class="lab">Tarea</div><h3>Elegir y reservar</h3><p>Encontrar una habitación con la capacidad correcta y reservarla sin equivocarse de número.</p></div>
+  </div>
+  <div class="flow">
+    <span>Login</span><i>→</i><span>Menú</span><i>→</i><span class="on">Consultar habitaciones</span><i>→</i><span>Reservar</span><i>→</i><span>Check-in</span><i>→</i><span>Check-out</span>
+  </div>
+  <div class="foot"><span>Grupo 4 · RoomsScreen</span><span>02</span></div>
+</section>
+
+<!-- 03 · ASÍ ERA ANTES -->
+<section class="slide">
+  <div class="kicker">02 · Diagnóstico</div>
+  <h1>Así era <em>antes</em></h1>
+  <div style="display:grid;grid-template-columns:1fr 330px;gap:40px;margin-top:6px">
+    <div>
+      <p class="lead" style="margin-top:22px">Funcionaba bien, pero <b>solo servía para mirar</b>: mostraba la información y dejaba todo el trabajo al recepcionista.</p>
+      <div class="leg" style="margin-top:28px">
+        <div><span class="mk red">1</span><p><b>Chip que no informa</b>Siempre dice "Disponible", porque solo se listan disponibles.</p></div>
+        <div><span class="mk red">2</span><p><b>Filas sin acción</b>No se puede reservar desde aquí.</p></div>
+        <div><span class="mk red">3</span><p><b>Capacidad escondida</b>Hay que leer fila por fila para saber cuál sirve.</p></div>
+        <div><span class="mk red">5</span><p><b>Sin forma de actualizar</b>Es <code>StatelessWidget</code>: no hay botón ni gesto para refrescar.</p></div>
+      </div>
+    </div>
+    <div style="margin-top:-30px">
+      <div class="phone" style="height:496px"><div class="screen">
+        <div class="ab"><svg class="ic"><use href="#i-back"/></svg>Habitaciones disponibles<span class="mk red" style="right:14px;top:22px">5</span></div>
+        <div class="body">
+          <div class="mc"><div class="h">Sencilla (3 disponible(s))<svg class="ic"><use href="#i-up"/></svg></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 101</div><div class="s">Capacidad: 1 persona(s)</div></div><span class="chipd">Disponible<span class="mk red" style="right:-12px;top:-14px">1</span></span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 102</div><div class="s">Capacidad: 1 persona(s)</div></div><span class="chipd">Disponible</span><span class="mk red" style="left:-10px;top:9px">2</span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 103</div><div class="s">Capacidad: 1 persona(s)<span class="mk red" style="left:116px;top:-6px">3</span></div></div><span class="chipd">Disponible</span></div>
+          </div>
+          <div class="mc"><div class="h">Doble (3 disponible(s))<svg class="ic"><use href="#i-up"/></svg></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 104</div><div class="s">Capacidad: 2 persona(s)</div></div><span class="chipd">Disponible</span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 105</div><div class="s">Capacidad: 2 persona(s)</div></div><span class="chipd">Disponible</span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 106</div><div class="s">Capacidad: 2 persona(s)</div></div><span class="chipd">Disponible</span></div>
+          </div>
+          <div class="mc"><div class="h">Suite (3 disponible(s))<svg class="ic"><use href="#i-up"/></svg></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 107</div><div class="s">Capacidad: 4 persona(s)</div></div><span class="chipd">Disponible</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="foot"><span>Vista recreada a partir del código original (rooms_screen.dart, 93 líneas)</span><span>03</span></div>
+</section>
+
+<!-- 04 · SEIS OPORTUNIDADES -->
+<section class="slide">
+  <div class="kicker">02 · Diagnóstico</div>
+  <h1>Seis <em>oportunidades</em> de mejora</h1>
+  <div class="grid g3" style="gap:16px;margin-top:26px">
+    <div class="card sm acc"><div class="lab">P1 · Consistencia</div><h3>Chip redundante</h3><p>Siempre dice "Disponible" en verde: ocupa espacio sin dar información.</p><div class="ev"><code>_EstadoChip</code> · líneas 75–92</div></div>
+    <div class="card sm acc"><div class="lab">P2 · Interacción</div><h3>La lista no lleva a ninguna acción</h3><p>Para reservar hay que volver al menú y escribir el número de memoria.</p><div class="ev"><code>ListTile</code> sin <code>onTap</code> · líneas 53–59</div></div>
+    <div class="card sm acc"><div class="lab">P3 · Organización</div><h3>No ayuda a elegir</h3><p>Con un grupo de 3, el recepcionista debe deducir que solo sirve una Suite.</p><div class="ev">Capacidad solo en el <code>subtitle</code> · línea 57</div></div>
+    <div class="card sm acc"><div class="lab">P4 · Jerarquía</div><h3>Sin panorama general</h3><p>Con "0 disponibles" no se sabe si el hotel está lleno o qué está ocupado.</p><div class="ev">Solo <code>consultarDisponiblesAgrupadas()</code></div></div>
+    <div class="card sm acc"><div class="lab">P5 · Retroalimentación</div><h3>Datos que se quedan viejos</h3><p>No hay forma de actualizar la lista sin salir y volver a entrar.</p><div class="ev"><code>StatelessWidget</code> · línea 14</div></div>
+    <div class="card sm acc"><div class="lab">P6 · Legibilidad</div><h3>Textos y estado vacío</h3><p>"disponible(s)", "persona(s)"; el aviso vacío no sugiere qué hacer.</p><div class="ev">Líneas 42 y 49</div></div>
+  </div>
+  <div class="foot"><span>Criterios de la guía: jerarquía, organización, legibilidad, consistencia, interacción, retroalimentación</span><span>04</span></div>
+</section>
+
+<!-- 05 · PRIORIZACIÓN -->
+<section class="slide">
+  <div class="kicker">03 · Priorización</div>
+  <h1>Cinco mejoras, <em>en orden</em></h1>
+  <table class="t">
+    <tr><th></th><th style="width:300px">Mejora</th><th style="width:90px">Resuelve</th><th style="width:300px">Beneficio esperado</th><th>Cómo se comprueba</th></tr>
+    <tr><td class="num">01</td><td><b>Botón "Reservar"</b> con el número precargado</td><td>P2</td><td>Menos pasos y cero errores al digitar el número</td><td>Reservar desde la lista sin escribir el número</td></tr>
+    <tr><td class="num">02</td><td><b>Filtro "¿Cuántas personas?"</b></td><td>P3</td><td>Ver solo las habitaciones que le sirven al huésped</td><td>Elegir "3–4" y ver que solo quedan Suites</td></tr>
+    <tr><td class="num">03</td><td><b>Resumen superior</b> de estados</td><td>P4</td><td>Panorama del hotel de un vistazo</td><td>Reservar y ver que los contadores cambian</td></tr>
+    <tr><td class="num">04</td><td><b>Actualización</b> automática y manual</td><td>P5</td><td>La lista siempre refleja el estado real</td><td>La habitación reservada desaparece al volver</td></tr>
+    <tr><td class="num">05</td><td><b>Limpieza visual y de textos</b></td><td>P1 · P6</td><td>Pantalla más limpia y fácil de leer</td><td>Comparar antes/después; ventana de 360 px</td></tr>
+  </table>
+  <div class="foot"><span>Prioridad = efecto directo sobre la tarea del usuario, no lo decorativo</span><span>05</span></div>
+</section>
+
+<!-- 06 · PROPUESTA -->
+<section class="slide">
+  <div class="kicker">04 · Propuesta de solución</div>
+  <h1>El <em>boceto</em></h1>
+  <div style="display:grid;grid-template-columns:330px 1fr;gap:56px;margin-top:16px">
+    <div class="wf">
+      <div class="blk" style="height:34px;justify-content:space-between;padding:0 12px"><span>← Título</span><span style="color:var(--accent-ink)">Actualizar · P5</span></div>
+      <div class="blk a" style="height:52px">Resumen: disponibles · reservadas · ocupadas<br>P4</div>
+      <div class="blk a" style="height:40px">¿Cuántas personas? (Todas) (1) (2) (3–4) · P3</div>
+      <div class="blk" style="height:30px;justify-content:flex-start;padding-left:12px">Sencilla (3 disponibles)</div>
+      <div class="blk" style="height:40px;justify-content:space-between;padding:0 10px"><span>Hab. 101 · 👤 1 persona</span><span style="background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:4px 10px">Reservar · P2</span></div>
+      <div class="blk" style="height:40px;justify-content:space-between;padding:0 10px"><span>Hab. 102 · 👤 1 persona</span><span style="background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:4px 10px">Reservar</span></div>
+      <div class="blk" style="height:30px;justify-content:flex-start;padding-left:12px">Doble (3 disponibles)</div>
+      <div class="blk" style="height:30px;justify-content:flex-start;padding-left:12px">Suite (3 disponibles)</div>
+      <div class="blk" style="height:40px;border:1px dashed #c9c7d2;background:#fff">Si no hay resultados: mensaje + sugerencia · P6</div>
+    </div>
+    <div>
+      <ul class="b" style="margin-top:8px">
+        <li><b>Jerarquía:</b> primero el contexto (resumen), luego el filtro y al final la lista.</li>
+        <li><b>Acción principal:</b> botón <code>FilledButton.tonal</code> a la derecha de cada fila; tonal para no competir con "Confirmar reserva".</li>
+        <li><b>Estados:</b> el filtro elegido queda resaltado y la lista se redibuja al volver de reservar.</li>
+        <li><b>Estado vacío:</b> mensaje con sugerencia ("Ajusta el filtro…").</li>
+        <li><b>Adaptabilidad:</b> <code>Row</code> + <code>Expanded</code> en el resumen y <code>ListView</code> con <code>padding</code>, para no desbordar en pantallas angostas.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Cada bloque del boceto responde a un problema del diagnóstico</span><span>06</span></div>
+</section>
+
+<!-- 07 · ANTES Y DESPUÉS -->
+<section class="slide">
+  <div class="kicker">05 · Comparación</div>
+  <h1 style="margin-top:18px;font-size:44px">Antes y <em>después</em></h1>
+  <div style="display:grid;grid-template-columns:292px 292px 1fr;gap:36px;margin-top:8px;align-items:start">
+    <div>
+      <div class="pcap">Antes</div>
+      <div class="phone" style="height:462px"><div class="screen">
+        <div class="ab"><svg class="ic"><use href="#i-back"/></svg>Habitaciones disponibles</div>
+        <div class="body">
+          <div class="mc"><div class="h">Sencilla (3 disponible(s))<svg class="ic"><use href="#i-up"/></svg></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 101</div><div class="s">Capacidad: 1 persona(s)</div></div><span class="chipd">Disponible</span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 102</div><div class="s">Capacidad: 1 persona(s)</div></div><span class="chipd">Disponible</span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 103</div><div class="s">Capacidad: 1 persona(s)</div></div><span class="chipd">Disponible</span></div>
+          </div>
+          <div class="mc"><div class="h">Doble (3 disponible(s))<svg class="ic"><use href="#i-up"/></svg></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 104</div><div class="s">Capacidad: 2 persona(s)</div></div><span class="chipd">Disponible</span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 105</div><div class="s">Capacidad: 2 persona(s)</div></div><span class="chipd">Disponible</span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 106</div><div class="s">Capacidad: 2 persona(s)</div></div><span class="chipd">Disponible</span></div>
+          </div>
+          <div class="mc"><div class="h">Suite (3 disponible(s))<svg class="ic"><use href="#i-up"/></svg></div></div>
+        </div>
+      </div></div>
+    </div>
+    <div>
+      <div class="pcap a">Después</div>
+      <div class="phone" style="height:462px"><div class="screen">
+        <div class="ab"><svg class="ic"><use href="#i-back"/></svg>Habitaciones disponibles<span class="sp"></span><svg class="ic" style="width:17px;height:17px"><use href="#i-refresh"/></svg><span class="mk" style="right:4px;top:4px">4</span></div>
+        <div class="body">
+          <div class="sum">
+            <div><svg class="ic"><use href="#i-ok"/></svg><b>9</b><small>Disponibles</small></div>
+            <div><svg class="ic"><use href="#i-ev"/></svg><b>0</b><small>Reservadas</small></div>
+            <div><svg class="ic"><use href="#i-bed"/></svg><b>0</b><small>Ocupadas</small></div>
+            <span class="mk" style="right:-8px;top:-8px">3</span>
+          </div>
+          <div class="fl">¿Cuántas personas?</div>
+          <div class="chips"><span class="sel"><svg class="ic" style="width:11px;height:11px"><use href="#i-check"/></svg>Todas</span><span>1</span><span>2</span><span>3–4</span><span class="mk" style="right:-8px;top:-4px">2</span></div>
+          <div class="mc"><div class="h">Sencilla (3 disponibles)<svg class="ic"><use href="#i-up"/></svg><span class="mk" style="right:28px;top:4px">5</span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 101</div><div class="s"><svg class="ic" style="width:11px;height:11px"><use href="#i-person"/></svg>1 persona</div></div><span class="btn-t">Reservar<span class="mk" style="right:-10px;top:-14px">1</span></span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 102</div><div class="s"><svg class="ic" style="width:11px;height:11px"><use href="#i-person"/></svg>1 persona</div></div><span class="btn-t">Reservar</span></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 103</div><div class="s"><svg class="ic" style="width:11px;height:11px"><use href="#i-person"/></svg>1 persona</div></div><span class="btn-t">Reservar</span></div>
+          </div>
+          <div class="mc"><div class="h">Doble (3 disponibles)<svg class="ic"><use href="#i-up"/></svg></div>
+            <div class="r"><svg class="ic"><use href="#i-door"/></svg><div class="tx"><div class="t">Habitación 104</div><div class="s"><svg class="ic" style="width:11px;height:11px"><use href="#i-person"/></svg>2 personas</div></div><span class="btn-t">Reservar</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+    <div class="leg" style="margin-top:36px">
+      <div><span class="mk">1</span><p><b>Reservar desde la fila</b>Abre la reserva con el número ya escrito.</p></div>
+      <div><span class="mk">2</span><p><b>Filtro por personas</b>Muestra solo lo que le sirve al grupo.</p></div>
+      <div><span class="mk">3</span><p><b>Resumen del hotel</b>Disponibles, reservadas y ocupadas.</p></div>
+      <div><span class="mk">4</span><p><b>Actualizar</b>Botón en la barra + gesto de arrastrar.</p></div>
+      <div><span class="mk">5</span><p><b>Textos limpios</b>Sin chip redundante; "3 disponibles", "1 persona".</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Vistas recreadas a partir del código de cada versión; en la sustentación se muestran en vivo</span><span>07</span></div>
+</section>
+
+<!-- 08 · STATELESS → STATEFUL -->
+<section class="slide">
+  <div class="kicker">06 · Implementación técnica</div>
+  <h1>De Stateless a <em>Stateful</em></h1>
+  <div class="grid g2" style="margin-top:26px">
+    <div><div class="clab">Antes · línea 14</div>
+<div class="code"><span class="k">class</span> RoomsScreen
+    <span class="del">extends StatelessWidget</span> {
+  <span class="k">final</span> Hotel hotel;
+  <span class="m">// sin estado propio</span>
+}</div></div>
+    <div><div class="clab a">Después</div>
+<div class="code"><span class="k">class</span> RoomsScreen
+    <span class="add">extends StatefulWidget</span> { ... }
+
+<span class="k">class</span> _RoomsScreenState ... {
+  <span class="add">int _filtroSeleccionado = 0;</span>
+}</div></div>
+  </div>
+  <div class="grid g3" style="margin-top:22px">
+    <div class="card acc"><div class="lab">Por qué</div><h3>Guardar el filtro</h3><p>La pantalla ahora recuerda qué opción eligió el recepcionista.</p></div>
+    <div class="card acc"><div class="lab">setState()</div><h3>Redibujar</h3><p>Al cambiar el filtro, al volver de reservar y al pulsar "Actualizar".</p></div>
+    <div class="card acc"><div class="lab">Hotel</div><h3>Solo se lee</h3><p>Llega por el constructor como antes: <code>widget.hotel</code>.</p></div>
+  </div>
+  <div class="foot"><span>Grupo 4 · RoomsScreen</span><span>08</span></div>
+</section>
+
+<!-- 09 · RESERVAR DESDE LA LISTA -->
+<section class="slide">
+  <div class="kicker">06 · Implementación técnica</div>
+  <h1>Reservar <em>desde la lista</em></h1>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr;margin-top:26px">
+    <div><div class="clab a">rooms_screen.dart</div>
+<div class="code"><span class="k">Future</span>&lt;void&gt; _irAReservar(Habitacion h) <span class="k">async</span> {
+  <span class="k">await</span> Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) =&gt; ReserveScreen(
+        hotel: widget.hotel,
+        <span class="add">numeroInicial: h.numero,</span>
+      ),
+    ),
+  );
+  <span class="k">if</span> (mounted) setState(() {});
+}</div></div>
+    <div><div class="clab a">reserve_screen.dart · único cambio fuera</div>
+<div class="code"><span class="add">final int? numeroInicial;</span>
+
+<span class="k">void</span> initState() {
+  <span class="k">super</span>.initState();
+  <span class="k">if</span> (widget.numeroInicial != <span class="k">null</span>) {
+    _numeroHabitacionController.text =
+        <span class="s">'${widget.numeroInicial}'</span>;
+  }
+}</div></div>
+  </div>
+  <div class="grid g3" style="margin-top:20px;gap:16px">
+    <div class="card sm acc"><div class="lab">Widget</div><h3>FilledButton.tonal</h3><p>En el <code>trailing</code> de cada <code>ListTile</code>.</p></div>
+    <div class="card sm acc"><div class="lab">await</div><h3>Espera el regreso</h3><p>Cuando el usuario vuelve, <code>setState</code> redibuja y la habitación reservada ya no aparece.</p></div>
+    <div class="card sm acc"><div class="lab">Opcional</div><h3>Sin romper nada</h3><p>Si no se envía <code>numeroInicial</code>, ReserveScreen funciona igual que antes.</p></div>
+  </div>
+  <div class="foot"><span>Grupo 4 · RoomsScreen</span><span>09</span></div>
+</section>
+
+<!-- 10 · FILTRO, RESUMEN, ACTUALIZAR -->
+<section class="slide">
+  <div class="kicker">06 · Implementación técnica</div>
+  <h1>Filtro, resumen y <em>actualizar</em></h1>
+  <div class="grid g3" style="margin-top:26px;gap:18px">
+    <div><div class="clab a">Filtro · P3</div>
+<div class="code" style="font-size:12.5px;padding:18px 18px;height:300px">_FiltroPersonas(<span class="s">'Todas'</span>, 1),
+_FiltroPersonas(<span class="s">'1'</span>, 1),
+_FiltroPersonas(<span class="s">'2'</span>, 2),
+_FiltroPersonas(<span class="s">'3–4'</span>, 3),
+
+<span class="k">bool</span> _cumpleFiltro(h, minimo)
+  =&gt; h.capacidad &gt;= minimo;
+
+<span class="m">// Wrap de ChoiceChip</span>
+onSelected: (_) =&gt; setState(
+  () =&gt; _filtroSeleccionado = i),</div></div>
+    <div><div class="clab a">Resumen · P4</div>
+<div class="code" style="font-size:12.5px;padding:18px 18px;height:300px">disponibles = hotel.habitaciones
+  .where((h) =&gt; h.estaDisponible)
+  .length;
+reservadas = ...estaReservada
+ocupadas   = ...estaOcupada
+
+<span class="m">// Row con 3 Expanded</span>
+Row(children: [
+  Expanded(child: _TarjetaResumen(..)),
+  ...
+])</div></div>
+    <div><div class="clab a">Actualizar · P5</div>
+<div class="code" style="font-size:12.5px;padding:18px 18px;height:300px">actions: [
+  IconButton(
+    tooltip: <span class="s">'Actualizar'</span>,
+    icon: Icon(Icons.refresh),
+    onPressed: _refrescar,
+  ),
+],
+body: RefreshIndicator(
+  onRefresh: _refrescar,
+  child: ListView(physics:
+   AlwaysScrollableScrollPhysics(),</div></div>
+  </div>
+  <p style="margin-top:18px;font-size:14.5px;color:var(--muted)">El gesto de arrastrar no funciona con mouse en Chrome; por eso también hay botón.</p>
+  <div class="foot"><span>Widgets: ChoiceChip · Wrap · Row/Expanded · Card · ExpansionTile · ListTile · FilledButton.tonal · RefreshIndicator · IconButton</span><span>10</span></div>
+</section>
+
+<!-- 11 · LO QUE SE CONSERVÓ -->
+<section class="slide">
+  <div class="kicker">06 · Implementación técnica</div>
+  <h1>Hotel <em>no se tocó</em></h1>
+  <div class="grid" style="grid-template-columns:1fr 1.25fr;gap:40px;margin-top:20px">
+    <ul class="b">
+      <li><code>lib/services/hotel.dart</code> quedó <b>idéntico</b> al original.</li>
+      <li>La disponibilidad se sigue validando en <code>reservarHabitacion()</code>.</li>
+      <li>La capacidad se sigue validando en <code>realizarCheckIn()</code>.</li>
+      <li>El filtro y el resumen <b>solo leen</b> datos; no deciden nada.</li>
+    </ul>
+    <div class="code" style="font-size:14px;align-self:start"><span class="k">RoomsScreen</span>
+├─ lee   → hotel.habitaciones
+├─ lee   → consultarDisponiblesAgrupadas()
+└─ abre  → <span class="k">ReserveScreen</span>(numeroInicial: 104)
+            └─ llama → hotel.reservarHabitacion()
+                       <span class="m">valida: existe, disponible, días &gt; 0</span>
+
+<span class="m">La interfaz presenta y delega.</span>
+<span class="m">Las reglas viven en un solo lugar.</span></div>
+  </div>
+  <div class="foot"><span>Regla de la guía: no duplicar en la interfaz reglas que corresponden a la lógica de negocio</span><span>11</span></div>
+</section>
+
+<!-- 12 · DEMOSTRACIÓN -->
+<section class="slide">
+  <div class="kicker">07 · Demostración funcional</div>
+  <h1>Qué vamos a <em>mostrar</em></h1>
+  <div class="steps">
+    <div class="step"><div class="n">01 · ABRIR</div><h4>Consultar habitaciones</h4><p>Se ve el resumen <b>9 · 0 · 0</b> y el filtro en "Todas".</p></div>
+    <div class="step"><div class="n">02 · FILTRAR</div><h4>Elegir "2"</h4><p>Las Sencillas quedan vacías; solo aparecen Dobles y Suites.</p></div>
+    <div class="step"><div class="n">03 · RESERVAR</div><h4>Pulsar "Reservar" en la 104</h4><p>ReserveScreen abre con <b>104</b> ya escrito.</p></div>
+    <div class="step"><div class="n">04 · VOLVER</div><h4>Confirmar y regresar</h4><p>La 104 desaparece y el resumen pasa a <b>8 · 1 · 0</b>.</p></div>
+    <div class="step"><div class="n">05 · ERROR DE DATOS</div><h4>Poner 0 días</h4><p>El campo muestra "Debe ser mayor que cero" y no se reserva.</p></div>
+    <div class="step"><div class="n">06 · ERROR DE NEGOCIO</div><h4>Reservar otra vez la 104</h4><p>Hotel responde: "La habitación 104 no está disponible."</p></div>
+  </div>
+  <div class="foot"><span>Además: ventana angosta (~360 px) para revisar que nada se desborde</span><span>12</span></div>
+</section>
+
+<!-- 13 · EVIDENCIAS -->
+<section class="slide">
+  <div class="kicker">08 · Evidencias y resultados</div>
+  <h1>Lo que <em>comprobamos</em></h1>
+  <div class="grid" style="grid-template-columns:1.25fr 1fr;gap:34px;margin-top:6px">
+    <div>
+      <table class="t" style="font-size:13.5px">
+        <tr><th></th><th>Prueba automatizada (flutter test)</th><th>Resultado</th></tr>
+        <tr><td class="num">A1</td><td>Aparecen el resumen, el filtro y 9 botones "Reservar"</td><td><span class="st ok">Comprobado</span></td></tr>
+        <tr><td class="num">A2</td><td>"3–4" deja solo las 3 Suites</td><td><span class="st ok">Comprobado</span></td></tr>
+        <tr><td class="num">A3</td><td>"Reservar" abre ReserveScreen con "101"</td><td><span class="st ok">Comprobado</span></td></tr>
+        <tr><td class="num">A4</td><td>Estado vacío con sugerencia</td><td><span class="st ok">Comprobado</span></td></tr>
+        <tr><td class="num">A5</td><td>"Actualizar" refleja una reserva hecha en Hotel</td><td><span class="st pen">Por confirmar</span></td></tr>
+      </table>
+    </div>
+    <div>
+      <table class="t" style="font-size:13.5px">
+        <tr><th></th><th>Prueba manual (Chrome)</th><th>Resultado</th></tr>
+        <tr><td class="num">M1</td><td>Uso normal: reservar la 104</td><td><span class="st pen">En la demo</span></td></tr>
+        <tr><td class="num">M2</td><td>Datos incorrectos: 0 días</td><td><span class="st pen">En la demo</span></td></tr>
+        <tr><td class="num">M3</td><td>Error de negocio: doble reserva</td><td><span class="st pen">En la demo</span></td></tr>
+        <tr><td class="num">M5</td><td>Pantalla angosta ~360 px</td><td><span class="st pen">En la demo</span></td></tr>
+        <tr><td class="num">M6</td><td>Botón "Actualizar"</td><td><span class="st pen">En la demo</span></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="margin-top:22px;padding:16px 22px;border-left:4px solid var(--warn)"><p style="font-size:15px"><b>Todavía es hipótesis:</b> que el filtro reduce el tiempo de elección. No se ha probado con usuarios, así que se presenta como beneficio <b>esperado</b>.</p></div>
+  <div class="foot"><span>Registro completo en evidencias/PRUEBAS.md</span><span>13</span></div>
+</section>
+
+<!-- 14 · TRAZABILIDAD -->
+<section class="slide">
+  <div class="kicker">08 · Evidencias y resultados</div>
+  <h1>Problema → cambio → <em>evidencia</em></h1>
+  <table class="t" style="font-size:14px">
+    <tr><th style="width:220px">Problema inicial</th><th>Cambio implementado</th><th style="width:250px">Evidencia</th><th style="width:130px">Conclusión</th></tr>
+    <tr><td><b>P2</b> · sin acción</td><td>Botón "Reservar" + <code>numeroInicial</code></td><td>Prueba A3 + código</td><td><span class="st ok">Comprobado</span></td></tr>
+    <tr><td><b>P3</b> · no ayuda a elegir</td><td>Filtro con <code>ChoiceChip</code></td><td>Prueba A2</td><td><span class="st ok">Comprobado</span></td></tr>
+    <tr><td><b>P4</b> · sin panorama</td><td>Resumen de 3 estados</td><td>Prueba A1</td><td><span class="st ok">Comprobado</span></td></tr>
+    <tr><td><b>P5</b> · datos viejos</td><td><code>StatefulWidget</code> + Actualizar + <code>RefreshIndicator</code></td><td>Código; A5 y M1 por confirmar</td><td><span class="st obs">Observado</span></td></tr>
+    <tr><td><b>P6</b> · textos y vacío</td><td>Plurales y estado vacío con sugerencia</td><td>Prueba A4</td><td><span class="st ok">Comprobado</span></td></tr>
+    <tr><td><b>P1</b> · chip redundante</td><td>Se quitó <code>_EstadoChip</code>; capacidad con ícono</td><td>Comparación antes/después</td><td><span class="st obs">Observado</span></td></tr>
+    <tr><td>Elegir más rápido</td><td>Filtro + resumen</td><td>Sin prueba con usuarios</td><td><span class="st esp">Esperado</span></td></tr>
+  </table>
+  <div class="foot"><span>Comprobado: una prueba lo demuestra · Observado: cambio visible en código/pantalla · Esperado: falta probarlo</span><span>14</span></div>
+</section>
+
+<!-- 15 · CONCLUSIONES -->
+<section class="slide">
+  <div class="kicker">09 · Conclusiones</div>
+  <h1>¿Por qué es <em>significativa</em>?</h1>
+  <div class="grid g3" style="margin-top:26px">
+    <div class="card acc"><div class="lab">El cambio clave</div><h3>De mirar a actuar</h3><p>El problema principal era P2: la pantalla no llevaba a ninguna acción. Ahora se reserva desde la fila, sin escribir el número.</p></div>
+    <div class="card acc"><div class="lab">Lo que aprendimos</div><h3>UX sin tocar reglas</h3><p>Separar interfaz y lógica permitió cambiar la experiencia sin modificar <code>Hotel</code> ni arriesgar las validaciones.</p></div>
+    <div class="card acc"><div class="lab">Principio aplicado</div><h3>Menos pasos, menos errores</h3><p>Prevenir el error (número precargado) vale más que decorar la pantalla.</p></div>
+  </div>
+  <div class="clab a" style="margin-top:28px">Siguiente versión</div>
+  <div class="grid g3" style="margin-top:0;gap:16px">
+    <div class="card sm"><h3>Ver todos los estados</h3><p>Mostrar también reservadas y ocupadas, reutilizando el chip de color.</p></div>
+    <div class="card sm"><h3>Probar con usuarios</h3><p>Medir si el filtro reduce el tiempo de elección.</p></div>
+    <div class="card sm"><h3>Guardar los datos</h3><p>Hoy todo vive en memoria: al recargar se pierde.</p></div>
+  </div>
+  <div class="foot"><span>Grupo 4 · RoomsScreen</span><span>15</span></div>
+</section>
+
+<!-- 16 · PREGUNTAS -->
+<section class="slide">
+  <div class="kicker">10 · Preguntas de la discusión</div>
+  <h1 style="font-size:46px">Lo que nos pueden <em>preguntar</em></h1>
+  <div class="rows" style="margin-top:18px">
+    <div class="row" style="padding:9px 0"><div class="n">01</div><div><div class="q">¿Cuál era el problema más importante?</div><div class="a">Que la lista no llevaba a ninguna acción: para reservar había que volver al menú y escribir el número de memoria.</div></div></div>
+    <div class="row" style="padding:9px 0"><div class="n">02</div><div><div class="q">¿Por qué esta solución y no otra?</div><div class="a">Precargar el número elimina el paso que causaba errores, sin tocar <code>Hotel</code> ni crear pantallas nuevas.</div></div></div>
+    <div class="row" style="padding:9px 0"><div class="n">03</div><div><div class="q">¿Qué principio de diseño aplicaron?</div><div class="a">Reducir pasos y prevenir errores; jerarquía: contexto, luego filtro, luego acción.</div></div></div>
+    <div class="row" style="padding:9px 0"><div class="n">04</div><div><div class="q">¿Qué widget hizo posible el cambio?</div><div class="a"><code>FilledButton.tonal</code> + <code>Navigator.push</code> con <code>numeroInicial</code>; <code>ChoiceChip</code> para el filtro; <code>setState</code> para redibujar.</div></div></div>
+    <div class="row" style="padding:9px 0"><div class="n">05</div><div><div class="q">¿Qué conservaron y por qué?</div><div class="a">Toda la lógica en <code>Hotel</code>: la interfaz presenta y delega, y las reglas no se duplican.</div></div></div>
+    <div class="row" style="padding:9px 0"><div class="n">06</div><div><div class="q">¿Cómo comprobaron que funciona?</div><div class="a">Pruebas de widget con <code>flutter test</code> y la demostración manual en Chrome.</div></div></div>
+    <div class="row" style="padding:9px 0"><div class="n">07</div><div><div class="q">¿Qué sigue siendo hipótesis?</div><div class="a">Que el filtro hace elegir más rápido: no se ha probado con usuarios.</div></div></div>
+  </div>
+  <div class="foot"><span>Grupo 4 · RoomsScreen</span><span>16</span></div>
+</section>
+
+</body>
+</html>
