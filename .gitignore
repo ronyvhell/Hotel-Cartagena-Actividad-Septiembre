@@ -42,3 +42,7 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Flutter SDK descargado durante el build de Vercel
+/flutter/
+.vercel

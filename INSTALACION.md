@@ -199,3 +199,30 @@ La pantalla trabajada en la actividad de rediseño es
 ## 10. Autor
 
 **Rony Andrés Valdelamar Vergara** — Pantalla asignada: RoomsScreen (Grupo 4).
+
+---
+
+## Publicar en Vercel (versión web)
+
+Flutter puede compilar la app a una página web estática (`build/web`), y eso
+sí se puede alojar en Vercel. Vercel no trae Flutter instalado, así que el
+archivo `vercel.json` de este repo lo descarga en cada despliegue y luego
+ejecuta `flutter build web --release`.
+
+1. Entra a <https://vercel.com/new> e importa el repositorio
+   `ronyvhell/Hotel-Cartagena-Actividad-Septiembre`.
+2. En **Framework Preset** deja **Other**. No cambies los comandos: Vercel
+   toma los de `vercel.json`.
+3. Pulsa **Deploy**. El primer build tarda unos minutos porque descarga
+   el SDK de Flutter.
+
+Alternativa sin esperar el build en Vercel: compilar en tu PC y subir solo
+la carpeta generada.
+
+```powershell
+flutter build web --release
+npx vercel deploy build/web --prod
+```
+
+> **Limitación:** la app guarda todo en memoria (no tiene base de datos).
+> Al recargar la página se pierden los usuarios y reservas creados.
